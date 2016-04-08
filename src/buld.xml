@@ -1,0 +1,111 @@
+<project name="com.home.camel" basedir="." default="main"
+	xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property file="build.properties" />
+
+	<property name="cxf.home" location="${lib.dir}" />
+
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<path id="3rd-party-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<path id="cxf.classpath">
+		<fileset dir="${cxf.home}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<echo>${classpath}</echo>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${lib.dir}" />
+		<delete dir="${jar.dir}" />
+	</target>
+
+	<target name="resolve" depends="clean">
+		<mkdir dir="${lib.dir}" />
+		<ivy:resolve file="ivy.xml" conf="default" />
+	</target>
+
+
+	<target name="retrieve-default" depends="resolve">
+		<ivy:retrieve pattern="${lib.dir}/[artifact]-[type]-[revision].[ext]"
+			conf="default" />
+	</target>
+
+	<echo>${cxf.classpath}</echo>
+
+	<target name="cxfWSDLToJava" depends="retrieve-default">
+		<java classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="true">
+			<arg value="-server" />
+			<arg value="-d" />
+			<arg value="${src.dir}" />
+			<arg value="-p" />
+			<arg value="com.home.soa.xsdtypes" />
+			<arg value="-verbose" />
+			<arg value="${config.dir}/com/home/soa/wsdls/Employee.wsdl" />
+			<classpath>
+				<path refid="cxf.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+
+	<target name="compile" depends="cxfWSDLToJava">
+
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"
+			classpathref="classpath">
+		</javac>
+		<copy file="${config.dir}/beans.xml" todir="${classes.dir}"/>
+		<copy file="${config.dir}/logback.xml" todir="${classes.dir}"/>
+		
+		
+	</target>
+
+ 	<target name="jar" depends="compile"> 
+ 		<mkdir dir="${jar.dir}" /> 
+ 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}"> 
+ 			<manifest> 
+ 				<attribute name="Main-Class" value="${main-class}" /> 
+ 			</manifest> 
+ 		</jar> 
+ 	</target> 
+
+ 	<target name="run" depends="jar">
+ 		<target name="main" depends="run" /> 
+ 		<java classname="${main-class}" fork="true">
+ 			<classpath> 
+ 				<path refid="classpath" /> 
+ 				<path location="${jar.dir}/${ant.project.name}.jar" /> 
+ 			</classpath> 
+ 		</java> 
+ 	</target> 
+
+
+	<target name="cxfWAR" depends="compile">
+		<war destfile="${war.dir}/${ant.project.name}.war" webxml="${basedir}/web/WEB-INF/web.xml">
+<!-- 			<fileset dir="src/html/myapp" /> -->
+<!-- 			<fileset dir="src/jsp/myapp" /> -->
+			<lib dir="${lib.dir}">
+<!-- 				<exclude name="jdbc1.jar" /> -->
+			</lib>
+			
+			<classes dir="${classes.dir}" />
+<!-- 			<zipfileset dir="src/graphics/images/gifs" prefix="images" /> -->
+		</war>
+	</target>
+
+
+	<target name="main" depends="run" />
+
+
+</project>
