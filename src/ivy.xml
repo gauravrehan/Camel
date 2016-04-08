@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="home" module="soa"/>
+    <info organisation="com.home" module="camel"/>
     <dependencies>
 
 
