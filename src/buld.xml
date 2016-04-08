@@ -65,8 +65,10 @@
 		<javac srcdir="${src.dir}" destdir="${classes.dir}"
 			classpathref="classpath">
 		</javac>
+		<!--
 		<copy file="${config.dir}/beans.xml" todir="${classes.dir}"/>
 		<copy file="${config.dir}/logback.xml" todir="${classes.dir}"/>
+		-->
 		
 		
 	</target>
@@ -81,7 +83,6 @@
  	</target> 
 
  	<target name="run" depends="jar">
- 		<target name="main" depends="run" /> 
  		<java classname="${main-class}" fork="true">
  			<classpath> 
  				<path refid="classpath" /> 
