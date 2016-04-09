@@ -7,13 +7,8 @@
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-    <property name="connectionFactory">
-      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616" />
-      </bean>
-    </property>
-  </bean>
+ 
+ <import resource="classpath:jms/applicationContext.xml"></import>
   
   <bean id="messageProcessor" class="com.home.camel.MessageProcessor"></bean>
 

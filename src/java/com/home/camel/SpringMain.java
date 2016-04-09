@@ -8,6 +8,7 @@ import org.apache.camel.main.Main;
 public class SpringMain {
 
 	public static void main(String[] args) throws Exception {
+		@SuppressWarnings("resource")
 		ApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);
 		Main m = new Main();
