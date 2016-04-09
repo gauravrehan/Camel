@@ -16,6 +16,8 @@
   
     <camel:route>
       <camel:from uri="file:/home/gauravrehan/Documents/temp/source?noop=true"/>
+      <!-- Wiretapping the whole exchange (in, out, headers etc..) -->
+      <camel:wireTap uri="jms:queue:AUDIT"></camel:wireTap>
       <camel:process ref="messageProcessor"/>
       <camel:choice>
 
