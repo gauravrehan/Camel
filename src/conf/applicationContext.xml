@@ -17,6 +17,21 @@
     <camel:route>
       <camel:from uri="file:/home/gauravrehan/Documents/temp/source?noop=true"/>
       <camel:process ref="messageProcessor"/>
+      <camel:choice>
+      	<camel:when>
+      		<camel:simple>${header.CamelFileName} regex '^.*xml$'</camel:simple>
+      		<camel:to  uri="jms:queue:COM.HOME.CAMEL.XML"/>
+      	</camel:when>
+      	<camel:when>
+      		<camel:simple>${header.CamelFileName} regex '^.*txt$'</camel:simple>
+      		<camel:to  uri="jms:queue:COM.HOME.CAMEL.TXT"/>
+      	</camel:when>
+      	
+      	<camel:otherwise>
+      			<camel:to  uri="jms:queue:COM.HOME.CAMEL.ERROR"/>
+      			<camel:stop />
+      	</camel:otherwise>
+      </camel:choice>
       <camel:to uri="jms:queue:COM.HOME.CAMEL.REQUEST"/>
     </camel:route>
     
