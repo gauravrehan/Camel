@@ -11,10 +11,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
+		basicCamelFiletoFile();
 		basicCamelFiletoJMS();
+		basicCamelJMStoJMS();
 	}
 	
-	public static void basicCamelFileOps() throws Exception
+	public static void basicCamelFiletoFile() throws Exception
 	{
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.addRoutes(new RouteBuilder() {
@@ -49,4 +51,23 @@ public class Main {
 		camelContext.stop();
 	}
 
+	
+	public static void basicCamelJMStoJMS() throws Exception
+	{
+		CamelContext camelContext = new DefaultCamelContext();
+		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+		
+		
+		camelContext.addRoutes(new RouteBuilder() {
+			public void configure() {
+				from("jms:queue:COM.HOME.CAMEL.REQUEST")
+						.to("jms:queue:COM.HOME.CAMEL.RESPONSE");
+			}
+		});
+		
+		camelContext.start();
+		Thread.sleep(10000);
+		camelContext.stop();
+	}
 }
