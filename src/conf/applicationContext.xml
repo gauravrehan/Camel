@@ -18,39 +18,31 @@
       <camel:from uri="file:/home/gauravrehan/Documents/temp/source?noop=true"/>
       <camel:process ref="messageProcessor"/>
       <camel:choice>
-<<<<<<< HEAD
+
       <!-- if file ends with xml then put in xml queue -->
-=======
->>>>>>> c8a3fcac3eef495f7a5de0e1225a55b88903850d
+
       	<camel:when>
       		<camel:simple>${header.CamelFileName} regex '^.*xml$'</camel:simple>
       		<camel:to  uri="jms:queue:COM.HOME.CAMEL.XML"/>
       	</camel:when>
-<<<<<<< HEAD
+
       	<!-- if file ends with txt then put in txt queue -->
-=======
->>>>>>> c8a3fcac3eef495f7a5de0e1225a55b88903850d
+
       	<camel:when>
       		<camel:simple>${header.CamelFileName} regex '^.*txt$'</camel:simple>
       		<camel:to  uri="jms:queue:COM.HOME.CAMEL.TXT"/>
       	</camel:when>
       	
-<<<<<<< HEAD
+
       	<!-- everything else goes in error queue -->
       	<camel:otherwise>
       			<camel:to  uri="jms:queue:COM.HOME.CAMEL.ERROR"/>
       			<!--  And stop here. don't send it further out of choice scope. -->
       			<camel:stop />
       	</camel:otherwise>
+      	
       </camel:choice>
-      <!-- out of choice. now allow the unstopped messages will get collected in REQUEST queue -->
-=======
-      	<camel:otherwise>
-      			<camel:to  uri="jms:queue:COM.HOME.CAMEL.ERROR"/>
-      			<camel:stop />
-      	</camel:otherwise>
-      </camel:choice>
->>>>>>> c8a3fcac3eef495f7a5de0e1225a55b88903850d
+      <!-- out of choice, send everything that is not stopped to the REQUEST Queue -->
       <camel:to uri="jms:queue:COM.HOME.CAMEL.REQUEST"/>
     </camel:route>
     
