@@ -42,7 +42,7 @@
       	</camel:otherwise>
       	
       </camel:choice>
-      <!-- out of choice, send everything that is not stopped to the REQUEST Queue -->
+      <!-- out of choice, send everything that is not stopped (in the choice) to the REQUEST Queue -->
       <camel:to uri="jms:queue:COM.HOME.CAMEL.REQUEST"/>
     </camel:route>
     
