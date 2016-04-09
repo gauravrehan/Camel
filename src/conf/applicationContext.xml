@@ -47,9 +47,14 @@
     </camel:route>
     
     <camel:route>
-      <camel:from uri="jms:queue:COM.HOME.CAMEL.REQUEST"/>
-      <camel:process ref="messageProcessor"/>
-      <camel:to uri="jms:queue:COM.HOME.CAMEL.RESPONSE"/>
+      <camel:from uri="jms:queue:COM.HOME.CAMEL.XML"/>
+	  <camel:process ref="messageProcessor"/>
+      <camel:filter>
+       <camel:xpath>/order[(@test)]</camel:xpath>
+       <camel:to uri="jms:queue:COM.HOME.CAMEL.RESPONSE"/>
+      </camel:filter>
+      <!--  below to is not required. if you put below to then filtered resulted get copied over
+      <camel:to uri="jms:queue:COM.HOME.CAMEL.RESPONSE"/> -->
     </camel:route>
   </camel:camelContext>
 
