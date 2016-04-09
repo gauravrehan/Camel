@@ -56,6 +56,29 @@
       <!--  below to is not required. if you put below to then filtered resulted get copied over
       <camel:to uri="jms:queue:COM.HOME.CAMEL.RESPONSE"/> -->
     </camel:route>
+    
+    
+    <!-- Multicast:
+    send messages in parallel to multiple queues in parallel. if we remove parallelProcessing attribute then still 
+    multicast happens but it happens sequentially.
+    to do it parallely either we can use the default executor with default 10 thread or provide our own like
+    we did here with 16 threads.
+    stopOnException stops on exception
+     -->
+    <camel:route>
+      <camel:from uri="jms:queue:COM.HOME.CAMEL.REQUEST"/>
+	  <camel:multicast stopOnException="true" parallelProcessing="true"  executorServiceRef="executor">
+	  	<camel:to uri="jms:queue:MULTICAST1"></camel:to>
+	  	<camel:to uri="jms:queue:MULTICAST2"></camel:to>
+	  </camel:multicast>
+    </camel:route>
+    
   </camel:camelContext>
+  
+  <!-- custom executor -->
+  <bean id="executor" class="java.util.concurrent.Executors"
+ factory-method="newFixedThreadPool">
+  <constructor-arg index="0" value="16"/>
+</bean>
 
 </beans>
